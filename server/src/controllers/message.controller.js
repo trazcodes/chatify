@@ -1,0 +1,64 @@
+import User from "../models/user.model.js";
+
+export const getUsersForSidebar = async (req, res) => {
+    try {
+        const loggedInUserId = req.user._id;
+        const filteredUsers = await User({ _id: { $ne: loggedInUserId } }).select("-password");
+        res.status(200).json(filteredUsers);
+    } catch (error) {
+        console.error("Error in getUsersForSidebar:", error);
+        res.status(500).json({ message: "Internal server error" });
+
+    }
+};
+
+export const getMessages = async (req, res) => {
+    try {
+        const { id: userToChatId } = req.params;
+        const myId = req.user._id;
+
+        const messages = await Message.find({
+            $or: [
+                { senderId: myId, recieverId: userToChatId },
+                { senderId: userToChatId, recieverId: myId },
+
+            ],
+        });
+    } catch (error) {
+        console.error("Error in getMessages:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+
+
+
+
+
+};
+
+export const sendMessages = async (req, res) =>{
+try {
+    const {text, image} = req.body;
+    const { id: receiverId} = req.params;
+    const senderId = req.user._id;
+
+    let imageUrl;
+    if(image){
+        const uploadResponse = await cloudinary.uploader.upload(image);
+        imageUrl = uploadResponse.secure_url;
+    }
+    const newMessage = await Message.create({
+        receiverId,
+        senderId,
+        text,
+        image: imageUrl,
+    })
+
+    await newMessage.save();
+    // todo: realtime message sending
+    res.status(200).json(newMessage);
+    
+} catch (error) {
+    console.error("Error in sendMessages:", error);
+    res.status(500).json({ message: "Internal server error" });
+}
+};
