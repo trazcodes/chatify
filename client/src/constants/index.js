@@ -1,8 +1,5 @@
-@import "tailwindcss";
-/* DaisyUI styles can be imported via CDN or installed as a package */
-@plugin "daisyui";
-@plugin "daisyui" {
-   themes:  "light",
+export const THEMES =[
+     "light",
       "dark",
       "cupcake",
       "bumblebee",
@@ -33,6 +30,5 @@
       "winter",
       "dim",
       "nord",
-      "sunset"
-   
- }
+      "sunset",
+]
