@@ -22,16 +22,16 @@ export const getMessages = async (req, res) => {
             $or: [
                 { senderId: myId, recieverId: userToChatId },
                 { senderId: userToChatId, recieverId: myId },
-
             ],
         });
+
+        res.status(200).json(messages);
     } catch (error) {
         console.error("Error in getMessages:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-
-  
 };
+
 
 export const sendMessages = async (req, res) =>{
 try {
